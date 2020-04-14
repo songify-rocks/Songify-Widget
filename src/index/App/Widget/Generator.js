@@ -139,15 +139,15 @@ export default class Generator extends Component {
                     <Container style={{marginTop: 50}}>
                     <Row>
                         <Col sm={7}>
-                            <div className="setting">
+                            <div className="setting select">
                                 <div>Song Upload URL: </div>
                                 <input value={this.state.uuidUrl} 
                                     placeholder="https://songify.rocks/getsong.php?[your-uuid-here]"
                                     onChange={this.urlHandler}/>
                             </div>
-                            <div className="setting">
+                            <div className="setting select">
                                 <div>Rounded Corners:</div>
-                                <Slider min={0} max={45} defaultValue={10} handle={this.handleBorder} style={{width: 332, marginTop: 15, float: "right"}}/>
+                                <Slider min={0} max={45} defaultValue={10} handle={this.handleBorder} style={{width: 332, marginTop: 15}}/>
                             </div>
                             <div className="setting select">
                                 <div className="text">
@@ -171,11 +171,11 @@ export default class Generator extends Component {
                                 </select>
                                 </div>
                             </div>
-                            <div className="setting">
+                            <div className="setting select">
                                 <div>Transparency: </div>
                                 <Slider min={0} max={1} defaultValue={0.6} step={0.01} style={{width: 332, marginTop: 15, float: "right"}} handle={this.handleTransparency}/>
                             </div>
-                            <div className="setting dings">
+                            <div className="setting select">
                             <div>Scroll Speed: </div>
                             <Slider min={10} max={80} defaultValue={20} step={1} style={{width: 332, marginTop: 15}} handle={this.handleSpeed}/>
                             </div>
@@ -189,8 +189,6 @@ export default class Generator extends Component {
                             dir={this.state.scrollDirection}
                             speed={this.state.speed}
                             position={this.state.iconPosition}
-                            offsetX={30}
-                            offsetY={40}
                             corners={this.state.borderRadius}
                         />
                         </div>

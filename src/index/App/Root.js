@@ -14,12 +14,11 @@ function Root() {
             <Widget 
               id={id}
               transparency={urlParams.get("transparency")}
+              corners={urlParams.get("corners")}
               limit={3000}
               dir={urlParams.get("dir")}
               speed={urlParams.get("speed")}
               position={urlParams.get("position")}
-              offsetX={0}
-              offsetY={0}
             />}
         </Fragment>
   )

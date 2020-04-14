@@ -61,12 +61,6 @@ select, option {
     position: relative;
 }
 
-.dings {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-}
-
 .selection::after {
     position: absolute;
     content: "";

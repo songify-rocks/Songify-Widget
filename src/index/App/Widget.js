@@ -10,6 +10,9 @@ export default function Widget(props) {
     return (
         <div className="App" style={{borderRadius: parseInt(props.corners), backgroundColor: transparency}}>
             {props.position === "left" && <Logo />}
+            <div className="title" style={{left: props.position === "right" ? 20 : 55}}>
+                    Now Playing:
+            </div>
             <div className="nowplaying">
                 <NowPlaying 
                     uuid={props.id}
@@ -17,8 +20,6 @@ export default function Widget(props) {
                     direction={props.dir}
                     speed={props.speed}
                     position={props.position}
-                    offsetX={props.offsetX}
-                    offsetY={props.offsetY}
                 />
             </div>
             {props.position === "right" && <Logo />}
@@ -29,7 +30,7 @@ export default function Widget(props) {
 function Logo() {
     return (
       <div className="logo">
-        <img src={logo} alt="logo"/>
+        <img src="https://i.scdn.co/image/ab67616d0000b2735f6da0bbb86a97c0870822ea" alt="logo" />
       </div>
     )
   }

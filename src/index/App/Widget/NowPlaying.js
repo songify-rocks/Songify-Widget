@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from "react"
+import React, {Component} from "react"
 import "./NowPlaying/NowPlaying.css"
 
 export default class NowPlaying extends Component {
@@ -17,15 +17,17 @@ export default class NowPlaying extends Component {
     }
 
     fetchSong = async () => {
-        const song = await fetch(`https://songify.rocks/getsong.php?id=${this.props.uuid}`)
+        if (this.props.uuid !== "" && this.props.uuid != null) {
+            const song = await fetch(`https://songify.rocks/getsong.php?id=${this.props.uuid}`)
             .then(res => res.text())
         
-        if (song !==  this.state.currentSong) {
-            this.setState({
-                currentSong: song
-            })
+            if (song !==  this.state.currentSong) {
+                this.setState({
+                    currentSong: song
+                })
+            }
+            this.checkSize()
         }
-        this.checkSize()
     }
 
     checkSize = () => {
@@ -47,14 +49,9 @@ export default class NowPlaying extends Component {
         else if (this.props.position === "right") left = 15
 
         return (
-            <Fragment>
-                <div className="title" style={{left: left + this.props.offsetY, top: this.props.offsetX}}>
-                    Now Playing:
-                </div>
                 <div className="song" id="song">
                     {this.state.currentSong}
                 </div>
-            </Fragment>
         )
     }
 }
