@@ -19,6 +19,7 @@ function Root() {
               dir={urlParams.get("dir")}
               speed={urlParams.get("speed")}
               position={urlParams.get("position")}
+              cover={urlParams.get("cover") || false}
             />}
         </Fragment>
   )

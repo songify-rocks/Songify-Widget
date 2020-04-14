@@ -13,6 +13,7 @@ export default class NowPlaying extends Component {
 
     componentDidMount = () => {
         this.fetchSong()
+        this.fetchCover()
         setInterval(this.fetchSong, this.props.ratelimit)
     }
 
@@ -20,7 +21,8 @@ export default class NowPlaying extends Component {
         if (this.props.uuid !== "" && this.props.uuid != null) {
             const song = await fetch(`https://songify.rocks/getsong.php?id=${this.props.uuid}`)
             .then(res => res.text())
-        
+            this.fetchCover()
+
             if (song !==  this.state.currentSong) {
                 this.setState({
                     currentSong: song
@@ -28,6 +30,12 @@ export default class NowPlaying extends Component {
             }
             this.checkSize()
         }
+    }
+
+    fetchCover = async () => {
+        const cover = await fetch(`https://songify.rocks/getcover.php?id=${this.props.uuid}`)
+            .then(res => res.text())
+        this.props.logoHandler(cover)
     }
 
     checkSize = () => {
@@ -44,14 +52,10 @@ export default class NowPlaying extends Component {
     }
 
     render() {
-        let left = 0
-        if (this.props.position === "left") left = 55
-        else if (this.props.position === "right") left = 15
-
         return (
-                <div className="song" id="song">
-                    {this.state.currentSong}
-                </div>
+        <div className="song" id="song">
+            {this.state.currentSong}
+        </div>
         )
     }
 }

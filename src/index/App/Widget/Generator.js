@@ -6,6 +6,7 @@ import Tooltip from "rc-tooltip"
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import Widget from "../Widget"
+import Switch from "react-switch"
 const Handle = Slider.Handle;
 
 export default class Generator extends Component {
@@ -20,7 +21,8 @@ export default class Generator extends Component {
             borderRadius: 10,
             transparency: 0.6,
             url: "",
-            uuidUrl: ""
+            uuidUrl: "",
+            useCover: false
         }
     }
 
@@ -116,9 +118,9 @@ export default class Generator extends Component {
         this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
     }
 
-    updateLink(uuid, dir, speed, transparency, position, corners) {
+    updateLink(uuid, dir, speed, transparency, position, corners, cover) {
         this.setState({
-            url: `https://widget.songify.rocks/${uuid}?dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}`
+            url: `https://widget.songify.rocks/${uuid}?dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}`
         })
     }
 
@@ -136,6 +138,12 @@ export default class Generator extends Component {
         })
 
         this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+    }
+
+    handleCover = checked => {
+        this.setState({
+            useCover: checked
+        })
     }
 
     render() {
@@ -189,6 +197,10 @@ export default class Generator extends Component {
                             <div>Scroll Speed: </div>
                             <Slider min={10} max={80} defaultValue={20} step={1} style={{width: 332, marginTop: 15}} handle={this.handleSpeed}/>
                             </div>
+                            <div className="setting select">
+                                <div>Use album cover:</div>
+                                <Switch checked={this.state.useCover} onChange={this.handleCover}/>
+                            </div>
                         </Col>
                         <Col sm={5}>
                         <div className="preview">
@@ -200,6 +212,7 @@ export default class Generator extends Component {
                             speed={this.state.speed}
                             position={this.state.iconPosition}
                             corners={this.state.borderRadius}
+                            cover={this.state.useCover}
                         />
                         </div>
                         <input 

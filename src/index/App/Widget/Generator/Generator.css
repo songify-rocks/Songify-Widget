@@ -112,6 +112,10 @@ select, option {
     padding-top: 15px;
 }
 
+.react-switch-handle {
+    margin-top: 10px;
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;

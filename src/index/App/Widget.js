@@ -1,39 +1,62 @@
-import React from "react"
+import React, { Component } from "react"
 import "./Widget/Widget.css"
-import logo from "./Widget/apple-icon-57x57.png"
+import songifyLogo from "./Widget/apple-icon-57x57.png"
 import NowPlaying from "./Widget/NowPlaying"
 
-export default function Widget(props) {
+export default class Widget extends Component {
     
-    const transparency = props.transparency === 0 ? "transparent" : `rgba(34, 34, 34, ${props.transparency || 1})`
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            logo: songifyLogo
+        }
+    }
+
+    updateLogo = logo => {
+        if (this.props.cover) {
+            this.setState({
+                logo
+            })
+        } else {
+            this.setState({
+                logo: songifyLogo
+            })
+        }
+    }
+
+    render() {
+        const transparency = this.props.transparency === 0 ? "transparent" : `rgba(34, 34, 34, ${this.props.transparency || 1})`
     
-    return (
-        <div className="App" style={{borderRadius: parseInt(props.corners), backgroundColor: transparency}}>
-            {props.position === "left" && <Logo />}
-            <div className="title" style={{left: props.position === "right" ? 20 : 55}}>
-                    Now Playing:
+        return (
+            <div className="App" style={{borderRadius: parseInt(this.props.corners), backgroundColor: transparency}}>
+                {this.props.position === "left" && <Logo logo={this.state.logo}/>}
+                <div className="title" style={{left: this.props.position === "right" ? 20 : 55}}>
+                        Now Playing:
+                </div>
+                <div className="nowplaying">
+                    <NowPlaying 
+                        uuid={this.props.id}
+                        ratelimit={this.props.limit}
+                        direction={this.props.dir}
+                        speed={this.props.speed}
+                        position={this.props.position}
+                        logoHandler={this.updateLogo}
+                    />
+                </div>
+                <div className="poweredby">
+                    powered by songify
+                </div>
+                {this.props.position === "right" && <Logo logo={this.state.logo}/>}
             </div>
-            <div className="nowplaying">
-                <NowPlaying 
-                    uuid={props.id}
-                    ratelimit={props.limit}
-                    direction={props.dir}
-                    speed={props.speed}
-                    position={props.position}
-                />
-            </div>
-            <div className="poweredby">
-                powered by songify
-            </div>
-            {props.position === "right" && <Logo />}
-        </div>
-    )
+        )
+    }
 }
 
-function Logo() {
+function Logo(props) {
     return (
       <div className="logo">
-        <img src={logo} alt="logo"/>
+        <img src={props.logo} alt="logo"/>
       </div>
     )
   }
