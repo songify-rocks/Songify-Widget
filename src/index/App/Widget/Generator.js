@@ -49,7 +49,8 @@ export default class Generator extends Component {
     componentDidMount = () => {
         if (this.props.id != null) {
             this.setState({
-                uuidUrl: `https://songify.rocks/getsong.php?${this.props.id}`
+                uuidUrl: `https://songify.rocks/getsong.php?${this.props.id}`,
+                uuid: this.props.id
             })
             this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
         }
