@@ -43,7 +43,18 @@ export default class Generator extends Component {
             <Handle value={value} {...restProps} />
           </Tooltip>
         )
-      }
+    }
+
+
+    componentDidMount = () => {
+        if (this.props.id != null) {
+            this.setState({
+                uuidUrl: `https://songify.rocks/getsong.php?${this.props.id}`
+            })
+            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+        }
+    }
+    
 
     handleTransparency = (props) => {
     const { value, dragging, index, ...restProps } = props
@@ -101,9 +112,7 @@ export default class Generator extends Component {
             uuidUrl: text,
             uuid
         })
-        setTimeout(() => {
-            this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
-        }, 300)
+        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
     }
 
     updateLink(uuid, dir, speed, transparency, position, corners) {

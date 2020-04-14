@@ -10,7 +10,7 @@ function Root() {
 
     return (
         <Fragment>
-            {id == null ? <Generator /> : 
+            {urlParams.entries().next().done ? <Generator id={id}/> : 
             <Widget 
               id={id}
               transparency={urlParams.get("transparency")}
