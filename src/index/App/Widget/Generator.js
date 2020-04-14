@@ -173,7 +173,7 @@ export default class Generator extends Component {
                             </div>
                             <div className="setting select">
                                 <div>Transparency: </div>
-                                <Slider min={0} max={1} defaultValue={0.6} step={0.01} style={{width: 332, marginTop: 15, float: "right"}} handle={this.handleTransparency}/>
+                                <Slider min={0} max={1} defaultValue={0.6} step={0.01} style={{width: 332, marginTop: 15}} handle={this.handleTransparency}/>
                             </div>
                             <div className="setting select">
                             <div>Scroll Speed: </div>

@@ -30,7 +30,7 @@ export default function Widget(props) {
 function Logo() {
     return (
       <div className="logo">
-        <img src="https://i.scdn.co/image/ab67616d0000b2735f6da0bbb86a97c0870822ea" alt="logo" />
+        <img src={logo} alt="logo"/>
       </div>
     )
   }
