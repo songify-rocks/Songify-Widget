@@ -22,6 +22,9 @@ export default function Widget(props) {
                     position={props.position}
                 />
             </div>
+            <div className="poweredby">
+                powered by songify
+            </div>
             {props.position === "right" && <Logo />}
         </div>
     )

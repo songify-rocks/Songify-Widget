@@ -23,9 +23,11 @@
     width: 400px;
     height: 300px;
     color: white;
-    padding-left: 30px;
+    padding-left: 44px;
     padding-top: 30px;
     background-repeat: space;
+    display: block !important;
+    color: rgba(255,255,255,100) !important;
 }
 
 .widthheight {

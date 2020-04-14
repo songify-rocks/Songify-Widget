@@ -26,3 +26,13 @@
     overflow-x: hidden;
     position: relative;
 }
+
+.poweredby {
+    position: absolute;
+    font-size: 8px;
+    font-style: italic;
+    font-weight: 500;
+    bottom: 6px;
+    text-align:center;
+    width: 100%;
+}
