@@ -17,11 +17,9 @@ export default class Widget extends Component {
         this.updateLogo("")
     }
 
-    updateLogo = cover => {
-        // for some reason, even though props.cover was a boolean set to false,
-        // it would still go into the if block
-        // so I made it explicit
-        if (this.props.cover === true) {
+    updateLogo = cover => {        
+        // fuck url params
+        if (this.props.cover === "true" || this.props.cover === true) {
             this.setState({
                 logo: cover
             })
@@ -61,7 +59,7 @@ export default class Widget extends Component {
 }
 
 function Logo(props) {
-    if (props.logo.trim() === "") props.logo = songifyLogo
+    // if (props.logo.trim() === "") props.logo = songifyLogo
     return (
       <div className="logo">
         <img src={props.logo} alt="logo"/>
