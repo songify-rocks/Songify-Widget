@@ -13,10 +13,17 @@ export default class Widget extends Component {
         }
     }
 
-    updateLogo = logo => {
-        if (this.props.cover) {
+    componentDidMount = () => {
+        this.updateLogo("")
+    }
+
+    updateLogo = cover => {
+        // for some reason, even though props.cover was a boolean set to false,
+        // it would still go into the if block
+        // so I made it explicit
+        if (this.props.cover === true) {
             this.setState({
-                logo
+                logo: cover
             })
         } else {
             this.setState({
@@ -54,6 +61,7 @@ export default class Widget extends Component {
 }
 
 function Logo(props) {
+    if (props.logo.trim() === "") props.logo = songifyLogo
     return (
       <div className="logo">
         <img src={props.logo} alt="logo"/>

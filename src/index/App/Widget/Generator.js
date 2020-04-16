@@ -32,7 +32,7 @@ export default class Generator extends Component {
             this.setState({
                 borderRadius: value
             })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value)
+            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover)
         }
         return (
           <Tooltip
@@ -54,7 +54,7 @@ export default class Generator extends Component {
                 uuidUrl: `https://songify.rocks/getsong.php?${this.props.id}`,
                 uuid: this.props.id
             })
-            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover)
         }
     }
     
@@ -65,7 +65,7 @@ export default class Generator extends Component {
         this.setState({
             transparency: value
         })
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, parseFloat(value).toFixed(2), this.state.iconPosition, this.state.borderRadius)
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, parseFloat(value).toFixed(2), this.state.iconPosition, this.state.borderRadius, this.state.useCover)
     }
     return (
         <Tooltip
@@ -86,7 +86,7 @@ export default class Generator extends Component {
             this.setState({
                 speed: value
             })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+            this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover)
         }
         return (
             <Tooltip
@@ -115,7 +115,7 @@ export default class Generator extends Component {
             uuidUrl: text,
             uuid
         })
-        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover)
     }
 
     updateLink(uuid, dir, speed, transparency, position, corners, cover) {
@@ -129,7 +129,7 @@ export default class Generator extends Component {
             iconPosition: event.target.value
         })
 
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius)
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius, this.state.useCover)
     }
 
     handleScroll = event => {
@@ -137,13 +137,15 @@ export default class Generator extends Component {
             scrollDirection: event.target.value
         })
 
-        this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius)
+        this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover)
     }
 
     handleCover = checked => {
         this.setState({
             useCover: checked
         })
+
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked)
     }
 
     render() {
