@@ -58,6 +58,9 @@ export default class Generator extends Component {
         }
     }
     
+    buildBaseUrl = () => {
+        return `${window.location.protocol}//${window.location.hostname}${window.location.pathname}`
+    }
 
     handleTransparency = (props) => {
     const { value, dragging, index, ...restProps } = props
@@ -119,8 +122,9 @@ export default class Generator extends Component {
     }
 
     updateLink(uuid, dir, speed, transparency, position, corners, cover) {
+        console.log(this.buildBaseUrl())
         this.setState({
-            url: `https://widget.songify.rocks/${uuid}?dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}`
+            url: `${this.buildBaseUrl()}${this.props.useParam ? `?id=${uuid}&` : `/${uuid}?`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}`
         })
     }
 
