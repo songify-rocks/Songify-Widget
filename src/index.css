@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: Outfit, system-ui;
+}
+
+.container {
+  @apply flex flex-row gap-8 2xl:max-w-7xl;
+}
+
+.settings {
+  @apply flex flex-col gap-4 flex-[3] overflow-hidden overflow-y-auto;
+}
+
+.preview {
+  @apply flex-[2];
+}
+
+.form-control {
+  @apply flex flex-row items-center justify-between text-xl;
+}
+
+.form-control label {
+  @apply select-none;
+}
+
+.form-control label::after {
+  content: ":"
+}
+
+.form-control input,
+.form-control select {
+  @apply max-w-sm w-3/5; 
+}
+
+.form-control select {
+  @apply select select-bordered focus:outline-none;
+}
+
+.form-control input[type="text"] {
+  @apply input input-bordered focus:outline-none;
+}
+
+.form-control input[type="range"] {
+  @apply range range-primary;
+}
+
+.form-control input[type="checkbox"] {
+  @apply checkbox checkbox-primary;
+}
