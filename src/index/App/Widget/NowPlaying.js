@@ -19,7 +19,7 @@ export default class NowPlaying extends Component {
 
     fetchSong = async () => {
         if (this.props.uuid !== "" && this.props.uuid != null) {
-            const song = await fetch(`https://songify.rocks/getsong.php?id=${this.props.uuid}`)
+            const song = await fetch(`https://songify.overcode.tv/getsong.php?id=${this.props.uuid}`)
             .then(res => res.text())
             this.fetchCover()
 
@@ -33,7 +33,7 @@ export default class NowPlaying extends Component {
     }
 
     fetchCover = async () => {
-        const cover = await fetch(`https://songify.rocks/getcover.php?id=${this.props.uuid}`)
+        const cover = await fetch(`https://songify.overcode.tv/getcover.php?id=${this.props.uuid}`)
             .then(res => res.text())
         this.props.logoHandler(cover)
     }
