@@ -124,7 +124,7 @@ export default class Generator extends Component {
     updateLink(uuid, dir, speed, transparency, position, corners, cover) {
         console.log(this.buildBaseUrl())
         this.setState({
-            url: `${this.buildBaseUrl()}${this.props.useParam ? `?id=${uuid}&` : `/${uuid}?`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}`
+            url: `${this.buildBaseUrl()}${`?id=${uuid}&`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}`
         })
     }
 
