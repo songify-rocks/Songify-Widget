@@ -51,7 +51,7 @@ export default class Generator extends Component {
     componentDidMount = () => {
         if (this.props.id != null) {
             this.setState({
-                uuidUrl: `https://songify.overcode.tv/getsong.php?${this.props.id}`,
+                uuidUrl: `https://api.songify.rocks/v1/getsong.php?${this.props.id}`,
                 uuid: this.props.id
             })
             this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover)
@@ -166,7 +166,7 @@ export default class Generator extends Component {
                             <div className="setting select">
                                 <div>Song Upload URL: </div>
                                 <input value={this.state.uuidUrl} 
-                                    placeholder="https://songify.overcode.tv/getsong.php?[your-uuid-here]"
+                                    placeholder="https://api.songify.rocks/v1/getsong.php?[your-uuid-here]"
                                     onChange={this.urlHandler}/>
                             </div>
                             <div className="setting select">
