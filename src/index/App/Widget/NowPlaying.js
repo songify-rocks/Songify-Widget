@@ -19,7 +19,7 @@ export default class NowPlaying extends Component {
 
     fetchSong = async () => {
         if (this.props.uuid !== "" && this.props.uuid != null) {
-            const song = await fetch(`https://api.songify.rocks/v1/getsong.php?id=${this.props.uuid}`).then(res => res.text())
+            const song = await fetch(`https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}`).then(res => res.text())
             this.fetchCover()
 
             if (song !==  this.state.currentSong) {
@@ -32,7 +32,7 @@ export default class NowPlaying extends Component {
     }
 
     fetchCover = async () => {
-        const cover = await fetch(`https://api.songify.rocks/v1/getcover.php?id=${this.props.uuid}`).then(res => res.text())
+        const cover = await fetch(`https://api.songify.rocks/v2/getcover?uuid=${this.props.uuid}`).then(res => res.text())
         this.props.logoHandler(cover)
     }
 
