@@ -15,30 +15,50 @@ export default class Widget extends Component {
         };
     }
 
-    handleTrackChange = () => {
-        if (this.props.showHideOnChange) {
-            // Apply the entrance animation
-            this.setState({ animationClass: `animate__${this.props.showAnimation || 'fadeIn'}` });
+    // Convert string props to proper types (booleans/numbers)
+    convertProps = () => {
+        return {
+            showHideOnChange: this.props.showHideOnChange === 'true',
+            cover: this.props.cover === 'true',
+            corners: parseInt(this.props.corners, 10) || 0,
+            transparency: this.props.transparency !== undefined ? parseFloat(this.props.transparency) : 1,
+            speed: parseInt(this.props.speed, 10) || 0,
+            showDuration: parseFloat(this.props.showDuration) || 3
+        };
+    };
 
-            // Wait for showDuration milliseconds before switching to the exit animation
-            setTimeout(() => {
-                // Remove the entrance animation and apply the exit animation
-                this.setState({ animationClass: `animate__${this.props.hideAnimation || 'fadeOut'}` });
-            }, this.props.showDuration * 1000 || 3000); // Default to 3 seconds if showDuration is not provided
+    handleTrackChange = (customDuration) => {
+        const { showHideOnChange } = this.convertProps();
+
+        if (!showHideOnChange) {
+            return; // Exit early if showHideOnChange is false
         }
+
+        let duration = customDuration || this.props.showDuration;
+        duration = (duration || 3) * 1000; // Default to 3 seconds if customDuration or showDuration is not provided
+
+        // Apply the entrance animation
+        this.setState({ animationClass: `animate__${this.props.showAnimation || 'fadeIn'}` });
+
+        // Wait for 'duration' before switching to the exit animation
+        setTimeout(() => {
+            // Remove the entrance animation and apply the exit animation
+            this.setState({ animationClass: `animate__${this.props.hideAnimation || 'fadeOut'}` });
+        }, duration);
     };
 
     componentDidMount = () => {
         this.updateLogo("");
 
-        console.log(this.props);
         if (this.props.preview) {
-            console.log("Preview mode");
-            // Loop handletrackchange every props.showDuration + 5 * 1000   
+
+            // Initial call to start animation
             this.handleTrackChange();
-            setInterval(this.handleTrackChange, (this.props.showDuration * 1000) + 2000);
+
+            // Use setInterval and pass the function reference with an arrow function
+            setInterval(() => this.handleTrackChange(5), this.props.showDuration * 1000 + 2000);
         }
-    }
+    };
 
     componentDidUpdate(prevProps) {
         // Check if the track has changed and trigger animation if necessary
@@ -48,7 +68,9 @@ export default class Widget extends Component {
     }
 
     updateLogo = (cover) => {
-        if (this.props.cover === "true" || this.props.cover === true) {
+        const { cover: useCover } = this.convertProps();
+
+        if (useCover) {
             if (!cover) {
                 this.setState({ logo: songifyLogo });
             } else {
@@ -60,14 +82,14 @@ export default class Widget extends Component {
     }
 
     render() {
-        const transparency = this.props.transparency === 0 ? "transparent" : `rgba(34, 34, 34, ${this.props.transparency || 1})`;
+        const { corners, transparency } = this.convertProps();
 
         return (
             <div
                 className={`App visible ${this.state.animationClass} animate__animated`}
                 style={{
-                    borderRadius: parseInt(this.props.corners),
-                    backgroundColor: transparency
+                    borderRadius: corners,
+                    backgroundColor: transparency === 0 ? "transparent" : `rgba(34, 34, 34, ${transparency})`
                 }}
             >
                 {this.props.position === "left" && <Logo logo={this.state.logo} />}
@@ -86,10 +108,6 @@ export default class Widget extends Component {
                         logoHandler={this.updateLogo}
                         onTrackChange={this.handleTrackChange}
                     />
-                </div>
-
-                <div className="poweredby">
-                    powered by songify
                 </div>
 
                 {this.props.position === "right" && <Logo logo={this.state.logo} />}

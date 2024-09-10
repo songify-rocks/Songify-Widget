@@ -33,7 +33,6 @@ export default class NowPlaying extends Component {
                 });
             }
             this.checkSize();
-
         }
     }
 

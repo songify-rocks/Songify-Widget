@@ -32,48 +32,47 @@ export default class Generator extends Component {
     }
 
     handleBorder = (props) => {
-        const { value, dragging, index, ...restProps } = props
+        const { value, dragging, index, ...restProps } = props;
         if (value !== this.state.borderRadius) {
             this.setState({
                 borderRadius: value
-            })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
+            });
+            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
         }
         return (
             <Tooltip
                 prefixCls="rc-slider-tooltip"
-                overlay={value}
-                visible={dragging}
-                placement="top"
+                overlay={value} // The tooltip now dynamically updates based on the slider value
+                visible={dragging} // Show tooltip when the handle is being dragged
+                placement="top" // Position the tooltip on top
                 key={index}
             >
                 <Handle value={value} {...restProps} />
             </Tooltip>
-        )
-    }
-
+        );
+    };
 
     componentDidMount = () => {
         if (this.props.id != null) {
             this.setState({
                 uuidUrl: `https://api.songify.rocks/v2/getsong?uuid=${this.props.id}`,
                 uuid: this.props.id
-            })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
+            });
+            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
         }
-    }
+    };
 
     buildBaseUrl = () => {
-        return `${window.location.protocol}//${window.location.hostname}${window.location.pathname}`
-    }
+        return `${window.location.protocol}//${window.location.hostname}`;
+    };
 
     handleTransparency = (props) => {
-        const { value, dragging, index, ...restProps } = props
+        const { value, dragging, index, ...restProps } = props;
         if (value !== this.state.transparency) {
             this.setState({
                 transparency: value
-            })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
+            });
+            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
         }
         return (
             <Tooltip
@@ -85,16 +84,16 @@ export default class Generator extends Component {
             >
                 <Handle value={value} {...restProps} />
             </Tooltip>
-        )
-    }
+        );
+    };
 
     handleSpeed = (props) => {
-        const { value, dragging, index, ...restProps } = props
+        const { value, dragging, index, ...restProps } = props;
         if (value !== this.state.speed) {
             this.setState({
                 speed: value
-            })
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
+            });
+            this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
         }
         return (
             <Tooltip
@@ -106,88 +105,80 @@ export default class Generator extends Component {
             >
                 <Handle value={value} {...restProps} />
             </Tooltip>
-        )
-    }
+        );
+    };
 
     copyText = () => {
-        const textbox = document.getElementById("url")
-        textbox.select()
-        document.execCommand("copy")
-    }
+        const textbox = document.getElementById("url");
+        textbox.select();
+        document.execCommand("copy");
+    };
 
-    urlHandler = event => {
-        const text = event.target.value
-        const uuid = text.split("?id=")[1]
+    urlHandler = (event) => {
+        const text = event.target.value;
+        const uuid = text.split("?id=")[1];
 
         this.setState({
             uuidUrl: text,
             uuid
-        })
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-    }
+        });
+        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    handleIcon = (event) => {
+        this.setState({
+            iconPosition: event.target.value
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    handleScroll = (event) => {
+        this.setState({
+            scrollDirection: event.target.value
+        });
+        this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    handleCover = (checked) => {
+        this.setState({
+            useCover: checked
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    showHideOnChange = (checked) => {
+        this.setState({
+            showHideOnChange: checked
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, checked, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    handleShowAnimation = (event) => {
+        this.setState({
+            showAnimation: event.target.value
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, event.target.value, this.state.hideAnimation, this.state.showDuration);
+    };
+
+    handleHideAnimation = (event) => {
+        this.setState({
+            hideAnimation: event.target.value
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, event.target.value, this.state.showDuration);
+    };
+
+    handleShowDuration = (event) => {
+        const duration = parseFloat(event.target.value) || 0;
+        this.setState({
+            showDuration: duration
+        });
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, duration);
+    };
 
     updateLink(uuid, dir, speed, transparency, position, corners, cover, showHideOnChange, showAnimation, hideAnimation, showDuration) {
-        console.log(this.buildBaseUrl())
         this.setState({
             url: `${this.buildBaseUrl()}${`?id=${uuid}&`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}&showHideOnChange=${showHideOnChange}&showAnimation=${showAnimation}&hideAnimation=${hideAnimation}&showDuration=${showDuration}`
         })
-    }
-
-    handleIcon = event => {
-        this.setState({
-            iconPosition: event.target.value
-        })
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-    }
-
-    handleScroll = event => {
-        this.setState({
-            scrollDirection: event.target.value
-        })
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-    }
-
-    handleCover = checked => {
-        this.setState({
-            useCover: checked
-        })
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-    }
-
-    showHideOnChange = checked => {
-        this.setState({
-            showHideOnChange: checked
-        })
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-    }
-
-    handleShowAnimation = event => {
-        this.setState({
-            showAnimation: event.target.value
-        })
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-
-    }
-
-    handleHideAnimation = event => {
-        this.setState({
-            hideAnimation: event.target.value
-        })
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-
-    }
-
-    handleShowDuration = event => {
-        this.setState({
-            showDuration: event.target.value
-        })
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration)
-
     }
 
 
@@ -311,8 +302,8 @@ export default class Generator extends Component {
                                             preview={true}
                                         />
                                     </div>
-                                    <textarea                  
-                                        style={{ height: 140 }}                      
+                                    <textarea
+                                        style={{ height: 140, width: 368, resize: 'vertical' }}
                                         id="url"
                                         className="link-generator"
                                         type="text"
