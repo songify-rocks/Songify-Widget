@@ -22,6 +22,10 @@ function Root() {
           speed={urlParams.get("speed")}
           position={urlParams.get("position")}
           cover={urlParams.get("cover") || false}
+          showHideOnChange={urlParams.get("showHideOnChange") || false}
+          showAnimation={urlParams.get("showAnimation")}
+          hideAnimation={urlParams.get("hideAnimation")}
+          showDuration={urlParams.get("showDuration")}
         />}
     </Fragment>
   )

@@ -1,5 +1,7 @@
 import React, { Component } from "react"
 import "./NowPlaying/NowPlaying.css"
+import 'animate.css';
+
 
 export default class NowPlaying extends Component {
 
@@ -19,22 +21,22 @@ export default class NowPlaying extends Component {
 
     fetchSong = async () => {
         if (this.props.uuid !== "" && this.props.uuid != null) {
-            const song = await fetch(`https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}`).then(res => res.text())
-            this.fetchCover()
-            const songElem = document.getElementsByClassName("App")[0]
+            const song = await fetch(`https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}`).then(res => res.text());
+            this.fetchCover();
+            const songElem = document.getElementsByClassName("App")[0];    
 
-            if (song == null || song === "") {
-                // Apply fadeout animation to element
-                songElem.style.animation = "fadeout 1s ease-in-out forwards"
-            } else if (song !== this.state.currentSong) {
-                songElem.style.animation = "fadein 1s ease-in-out forwards"
+            if (song !== this.state.currentSong) {
+                // update the state
+                this.props.onTrackChange();
                 this.setState({
                     currentSong: song
-                })
+                });
             }
-            this.checkSize()
+            this.checkSize();
+
         }
     }
+
 
     fetchCover = async () => {
         const cover = await fetch(`https://api.songify.rocks/v2/getcover?uuid=${this.props.uuid}`).then(res => res.text())
@@ -50,8 +52,8 @@ export default class NowPlaying extends Component {
 
         const scrollingSpeed = width / this.props.speed
 
-        songElem.style.width = `${width + 1}px`
-        songElem.style.animation = `marquee ${scrollingSpeed}s linear infinite ${this.props.direction}`
+        songElem.style.width = `${width + 1}px`;
+        songElem.style.animation = `marquee ${scrollingSpeed}s linear infinite ${this.props.direction}`;
     }
 
     render() {

@@ -6,6 +6,14 @@
     display: flex;
     align-items: center;
     position: relative;
+    opacity: 0; /* Start with 0 opacity */
+    visibility: hidden; /* Start hidden */
+    transition: opacity 0.5s ease-in-out; /* Transition opacity */
+}
+
+.App.visible {
+    opacity: 1; /* Fully visible */
+    visibility: visible; /* Visible, but controlled in JS for smoother effect */
 }
 
 .logo {

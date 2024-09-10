@@ -52,6 +52,24 @@ input {
     width: 300px;
 }
 
+
+textarea, select {
+    border: 2px white;
+    border-radius: 3px;
+    font-size: 16px;
+    line-height: 20px;
+    color: rgba(79,84,92,.6);
+    font-weight: 700;
+    padding: 14px 16px;
+    box-shadow: 0 3px 3px 0 rgba(0,0,0,.05);
+}
+
+textarea {
+    width: 300px;
+}
+
+
+
 select, option {
     appearance: none;
     width: 150px;
