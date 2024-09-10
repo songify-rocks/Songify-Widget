@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, { Component } from "react"
 import "./NowPlaying/NowPlaying.css"
 
 export default class NowPlaying extends Component {
@@ -21,8 +21,13 @@ export default class NowPlaying extends Component {
         if (this.props.uuid !== "" && this.props.uuid != null) {
             const song = await fetch(`https://api.songify.rocks/v1/getsong.php?id=${this.props.uuid}`).then(res => res.text())
             this.fetchCover()
+            const songElem = document.getElementsByClassName("App")[0]
 
-            if (song !==  this.state.currentSong) {
+            if (song == null || song === "") {
+                // Apply fadeout animation to element
+                songElem.style.animation = "fadeout 1s ease-in-out forwards"
+            } else if (song !== this.state.currentSong) {
+                songElem.style.animation = "fadein 1s ease-in-out forwards"
                 this.setState({
                     currentSong: song
                 })
@@ -51,9 +56,9 @@ export default class NowPlaying extends Component {
 
     render() {
         return (
-        <div className="song" id="song">
-            {this.state.currentSong}
-        </div>
+            <div className="song" id="song">
+                {this.state.currentSong}
+            </div>
         )
     }
 }
