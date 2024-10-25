@@ -37,18 +37,15 @@ export default class Widget extends Component {
         }
 
         let duration = customDuration || this.props.showDuration;
-        console.log("Duration: ", duration);
         duration = (duration || 3) * 1000; // Default to 3 seconds if customDuration or showDuration is not provided
 
         // Apply the entrance animation
-        console.log("Applying entrance animation");
         this.setState({ animationClass: `animate__${this.props.showAnimation || 'fadeIn'}` });
 
 
         // Wait for 'duration' before switching to the exit animation
         setTimeout(() => {
             // Remove the entrance animation and apply the exit animation
-            console.log("Applying exit animation");
             this.setState({ animationClass: `animate__${this.props.hideAnimation || 'fadeOut'}` });
         }, duration);
     };

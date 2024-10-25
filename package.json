@@ -16,6 +16,10 @@
     "react-scripts": "^5.0.1",
     "react-switch": "^5.0.1"
   },
+  "resolutions": {
+    "nth-check": "^2.0.1",
+    "postcss": "^8.4.31"
+  },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
