@@ -26,6 +26,7 @@ function Root() {
           showAnimation={urlParams.get("showAnimation")}
           hideAnimation={urlParams.get("hideAnimation")}
           showDuration={urlParams.get("showDuration")}
+          canvas={urlParams.get("canvas")}
         />}
     </Fragment>
   )

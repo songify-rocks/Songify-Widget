@@ -23,9 +23,26 @@
     display: flex;
 }
 
+.video-container {
+    width: 64px;           /* Container width */
+    height: 100%;          /* Full height container */
+    overflow: hidden;      /* Ensure the video stays inside the container */
+    position: relative;    /* Set positioning context */
+    border-radius: 10px;
+}
+
+video {
+    width: 100%;
+    /* height: 100%; */
+    position: relative;
+    /* left: 50%; */
+    transform: translateY(-25%);
+}
+
+
 .logo > img {
-    width: 90%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
 }
 

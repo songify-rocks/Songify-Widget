@@ -9,7 +9,8 @@ export default class NowPlaying extends Component {
         super(props)
 
         this.state = {
-            currentSong: ""
+            currentSong: "",
+            fullSongObj: {}
         }
     }
 
@@ -19,27 +20,34 @@ export default class NowPlaying extends Component {
         setInterval(this.fetchSong, this.props.ratelimit)
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.version !== this.props.version) {
+            this.state.currentSong = ""
+            this.fetchSong();
+        }
+    }
+
     fetchSong = async () => {
         if (this.props.uuid !== "" && this.props.uuid != null) {
-            const song = await fetch(`https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}`).then(res => res.text());
-            this.fetchCover();
-            const songElem = document.getElementsByClassName("App")[0];    
-
+            const fullSong = await fetch(`https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}&full=true`).then(res => res.json());
+            const song = fullSong.song;
             if (song !== this.state.currentSong) {
                 // update the state
                 this.props.onTrackChange();
                 this.setState({
-                    currentSong: song
+                    currentSong: song,
+                    fullSongObj: fullSong
                 });
+                this.fetchCover();
+                this.checkSize();
             }
-            this.checkSize();
         }
     }
 
 
     fetchCover = async () => {
         const cover = await fetch(`https://api.songify.rocks/v2/getcover?uuid=${this.props.uuid}`).then(res => res.text())
-        this.props.logoHandler(cover)
+        this.props.logoHandler(cover, this.state.fullSongObj)
     }
 
     checkSize = () => {
