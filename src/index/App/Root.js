@@ -1,18 +1,28 @@
-import React, { Fragment } from "react"
-import "./Widget/Widget.css"
-import Widget from "./Widget"
-import { useParams } from "react-router-dom"
-import Generator from "./Widget/Generator"
+import React, { Fragment, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import "./Widget/Widget.css";
+import Widget from "./Widget";
+// import { useParams } from "react-router-dom";
+import Generator from "./Widget/Generator";
 
 function Root() {
-  const { id } = useParams()
-  const idInUrl = checkForUUID(id)
-  const urlParams = new URLSearchParams(window.location.search)
-  const paramId = urlParams.get("id")
-  // debugger
+  const { id } = useParams();
+  const idInUrl = checkForUUID(id);
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramId = urlParams.get("id");
+
+  useEffect(() => {
+    if (id === "demo") {
+      window.location.href =
+        "https://widget.songify.rocks/4c7e74a6-00b4-4344-8021-e6296f601e3e";
+    }
+  }, [id]);
+
   return (
     <Fragment>
-      {urlParams.entries().next().done || (!idInUrl && !hasMultipleParams()) ? <Generator id={idInUrl ? id : paramId} useParam={!idInUrl} /> :
+      {urlParams.entries().next().done || (!idInUrl && !hasMultipleParams()) ? (
+        <Generator id={idInUrl ? id : paramId} useParam={!idInUrl} />
+      ) : (
         <Widget
           id={idInUrl ? id : paramId}
           transparency={urlParams.get("transparency")}
@@ -27,18 +37,19 @@ function Root() {
           hideAnimation={urlParams.get("hideAnimation")}
           showDuration={urlParams.get("showDuration")}
           canvas={urlParams.get("canvas")}
-        />}
+        />
+      )}
     </Fragment>
-  )
+  );
 }
 
 function checkForUUID(id) {
-  const regex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/g
-  return regex.test(id)
+  const regex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/g;
+  return regex.test(id);
 }
 
 function hasMultipleParams() {
-  return window.location.search.split("&").length > 1
+  return window.location.search.split("&").length > 1;
 }
 
-export default Root
+export default Root;
