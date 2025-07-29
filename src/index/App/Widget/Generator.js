@@ -29,18 +29,13 @@ export default class Generator extends Component {
             showAnimation: "fadeIn",
             hideAnimation: "fadeOut",
             showDuration: 5,
+            enableScroll: true,
             version: 1
         }
     }
 
     handleBorder = (props) => {
         const { value, dragging, index, ...restProps } = props;
-        if (value !== this.state.borderRadius) {
-            this.setState({
-                borderRadius: value
-            });
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
-        }
         return (
             <Tooltip
                 prefixCls="rc-slider-tooltip"
@@ -60,7 +55,7 @@ export default class Generator extends Component {
                 uuidUrl: `https://api.songify.rocks/v2/getsong?uuid=${this.props.id}`,
                 uuid: this.props.id
             });
-            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
         }
     };
 
@@ -70,12 +65,6 @@ export default class Generator extends Component {
 
     handleTransparency = (props) => {
         const { value, dragging, index, ...restProps } = props;
-        if (value !== this.state.transparency) {
-            this.setState({
-                transparency: value
-            });
-            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
-        }
         return (
             <Tooltip
                 prefixCls="rc-slider-tooltip"
@@ -91,12 +80,6 @@ export default class Generator extends Component {
 
     handleSpeed = (props) => {
         const { value, dragging, index, ...restProps } = props;
-        if (value !== this.state.speed) {
-            this.setState({
-                speed: value
-            });
-            this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
-        }
         return (
             <Tooltip
                 prefixCls="rc-slider-tooltip"
@@ -124,7 +107,7 @@ export default class Generator extends Component {
             uuidUrl: text,
             uuid
         });
-        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleIcon = (event) => {
@@ -132,14 +115,14 @@ export default class Generator extends Component {
             iconPosition: event.target.value
         });
         this.state.version = this.state.version + 1;
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleScroll = (event) => {
         this.setState({
             scrollDirection: event.target.value
         });
-        this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleCover = (checked) => {
@@ -148,7 +131,7 @@ export default class Generator extends Component {
         });
         this.state.version = this.state.version + 1;
 
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleCanvas = (checked) => {
@@ -157,28 +140,36 @@ export default class Generator extends Component {
         });
         this.state.version = this.state.version + 1;
 
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, checked);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, checked, this.state.enableScroll);
     };
 
     showHideOnChange = (checked) => {
         this.setState({
             showHideOnChange: checked
         });
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, checked, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, checked, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
+    };
+
+    handleEnableScroll = (checked) => {
+        this.setState({
+            enableScroll: checked
+        });
+        this.state.version = this.state.version + 1;
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, checked);
     };
 
     handleShowAnimation = (event) => {
         this.setState({
             showAnimation: event.target.value
         });
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, event.target.value, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, event.target.value, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleHideAnimation = (event) => {
         this.setState({
             hideAnimation: event.target.value
         });
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, event.target.value, this.state.showDuration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, event.target.value, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
     };
 
     handleShowDuration = (event) => {
@@ -186,12 +177,12 @@ export default class Generator extends Component {
         this.setState({
             showDuration: duration
         });
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, duration, this.state.useCanvas);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, duration, this.state.useCanvas, this.state.enableScroll);
     };
 
-    updateLink(uuid, dir, speed, transparency, position, corners, cover, showHideOnChange, showAnimation, hideAnimation, showDuration, useCanvas) {
+    updateLink(uuid, dir, speed, transparency, position, corners, cover, showHideOnChange, showAnimation, hideAnimation, showDuration, useCanvas, enableScroll) {
         this.setState({
-            url: `${this.buildBaseUrl()}${`?id=${uuid}&`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}&showHideOnChange=${showHideOnChange}&showAnimation=${showAnimation}&hideAnimation=${hideAnimation}&showDuration=${showDuration}&canvas=${useCanvas}`
+            url: `${this.buildBaseUrl()}${`?id=${uuid}&`}dir=${dir}&speed=${speed}&transparency=${transparency}&position=${position}&corners=${corners}&cover=${cover}&showHideOnChange=${showHideOnChange}&showAnimation=${showAnimation}&hideAnimation=${hideAnimation}&showDuration=${showDuration}&canvas=${useCanvas}&enableScroll=${enableScroll}`
         })
     }
 
@@ -229,14 +220,17 @@ export default class Generator extends Component {
                                     </div>
                                     <div className="setting select">
                                         <div>Rounded Corners:</div>
-                                        <Slider min={0} max={45} defaultValue={10} handle={this.handleBorder} style={{ width: 332, marginTop: 15 }} />
+                                        <Slider min={0} max={45} value={this.state.borderRadius} handle={this.handleBorder} onChange={(value) => {
+                                            this.setState({ borderRadius: value });
+                                            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
+                                        }} style={{ width: 332, marginTop: 15 }} />
                                     </div>
                                     <div className="setting select">
                                         <div className="text">
                                             <div>Icon position: </div>
                                         </div>
                                         <div className="selection">
-                                            <select value={this.state.iconDirection} onChange={this.handleIcon}>
+                                            <select value={this.state.iconPosition} onChange={this.handleIcon}>
                                                 <option value="left">Left</option>
                                                 <option value="right">Right</option>
                                             </select>
@@ -255,12 +249,24 @@ export default class Generator extends Component {
                                     </div>
                                     <div className="setting select">
                                         <div>Transparency: </div>
-                                        <Slider min={0} max={1} defaultValue={0.6} step={0.01} style={{ width: 332, marginTop: 15 }} handle={this.handleTransparency} />
+                                        <Slider min={0} max={1} value={this.state.transparency} step={0.01} style={{ width: 332, marginTop: 15 }} handle={this.handleTransparency} onChange={(value) => {
+                                            this.setState({ transparency: value });
+                                            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
+                                        }} />
                                     </div>
                                     <div className="setting select">
-                                        <div>Scroll Speed: </div>
-                                        <Slider min={10} max={80} defaultValue={20} step={1} style={{ width: 332, marginTop: 15 }} handle={this.handleSpeed} />
+                                        <div>Enable Scroll:</div>
+                                        <Switch checked={this.state.enableScroll} onChange={this.handleEnableScroll} />
                                     </div>
+                                    {this.state.enableScroll && (
+                                        <div className="setting select">
+                                            <div>Scroll Speed: </div>
+                                            <Slider min={10} max={80} value={this.state.speed} step={1} style={{ width: 332, marginTop: 15 }} handle={this.handleSpeed} onChange={(value) => {
+                                                this.setState({ speed: value });
+                                                this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll);
+                                            }} />
+                                        </div>
+                                    )}
                                     <div className="setting select">
                                         <div>Use album cover:</div>
                                         <Switch checked={this.state.useCover} onChange={this.handleCover} />
@@ -318,6 +324,7 @@ export default class Generator extends Component {
                                             showAnimation={this.state.showAnimation}
                                             hideAnimation={this.state.hideAnimation}
                                             showDuration={this.state.showDuration}
+                                            enableScroll={this.state.enableScroll}
                                             preview={true}
                                             version={this.state.version}
                                         />

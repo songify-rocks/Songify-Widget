@@ -13,6 +13,8 @@
     /* padding-left: 15px; */
     animation: marquee 20s linear infinite;
     width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @keyframes marquee {

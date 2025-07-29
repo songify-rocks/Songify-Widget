@@ -28,6 +28,7 @@ export default class Widget extends Component {
       speed: parseInt(this.props.speed, 10) || 0,
       showDuration: parseFloat(this.props.showDuration) || 3,
       canvas: this.props.canvas === "true" || this.props.canvas == true,
+      enableScroll: this.props.enableScroll === undefined ? true : (this.props.enableScroll === "true" || this.props.enableScroll == true),
     };
   };
 
@@ -165,6 +166,7 @@ export default class Widget extends Component {
             position={this.props.position}
             logoHandler={this.updateLogo}
             onTrackChange={this.handleTrackChange}
+            enableScroll={this.props.enableScroll}
           />
         </div>
 

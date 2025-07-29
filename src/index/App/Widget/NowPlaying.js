@@ -25,6 +25,21 @@ export default class NowPlaying extends Component {
             this.state.currentSong = ""
             this.fetchSong();
         }
+        
+        // Re-apply animation when speed changes
+        if (prevProps.speed !== this.props.speed && this.state.currentSong) {
+            this.checkSize();
+        }
+        
+        // Re-apply animation when direction changes
+        if (prevProps.direction !== this.props.direction && this.state.currentSong) {
+            this.checkSize();
+        }
+        
+        // Re-apply animation when enableScroll changes
+        if (prevProps.enableScroll !== this.props.enableScroll && this.state.currentSong) {
+            this.checkSize();
+        }
     }
 
     fetchSong = async () => {
@@ -57,10 +72,18 @@ export default class NowPlaying extends Component {
         const width = context.measureText(this.state.currentSong).width
         const songElem = document.getElementById("song")
 
-        const scrollingSpeed = width / this.props.speed
-
-        songElem.style.width = `${width + 1}px`;
-        songElem.style.animation = `marquee ${scrollingSpeed}s linear infinite ${this.props.direction}`;
+        // Check if scroll is enabled (default to true if not specified)
+        const enableScroll = this.props.enableScroll === undefined ? true : (this.props.enableScroll === "true" || this.props.enableScroll === true);
+        
+        if (enableScroll) {
+            const scrollingSpeed = width / this.props.speed
+            songElem.style.width = `${width + 1}px`;
+            songElem.style.animation = `marquee ${scrollingSpeed}s linear infinite ${this.props.direction}`;
+        } else {
+            // Disable scroll animation
+            songElem.style.width = "auto";
+            songElem.style.animation = "none";
+        }
     }
 
     render() {
