@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import "./Widget/Widget.css";
-import songifyLogo from "./Widget/apple-icon-57x57.png";
+import songifyLogo from "./Widget/logo.png";
 import NowPlaying from "./Widget/NowPlaying";
 import "animate.css";
 
@@ -29,6 +29,7 @@ export default class Widget extends Component {
       showDuration: parseFloat(this.props.showDuration) || 3,
       canvas: this.props.canvas === "true" || this.props.canvas == true,
       enableScroll: this.props.enableScroll === undefined ? true : (this.props.enableScroll === "true" || this.props.enableScroll == true),
+      scrollAnimation: this.props.scrollAnimation || "continuous",
     };
   };
 
@@ -98,38 +99,38 @@ export default class Widget extends Component {
                  !canvas.includes("error") && 
                  !canvas.includes("Connection refused")) {
                // If canvas is found and valid, update the logo with the canvas URL
-               this.setState({ logo: canvas });
+               this.setState({ logo: canvas, cover: cover });
              } else {
                // Invalid canvas response, fallback to cover or placeholder
                if (useCover && cover) {
-                 this.setState({ logo: cover }); // Use cover if available and enabled
+                 this.setState({ logo: cover, cover: cover }); // Use cover if available and enabled
                } else {
-                 this.setState({ logo: songifyLogo }); // Fallback to placeholder
+                 this.setState({ logo: songifyLogo, cover: songifyLogo }); // Fallback to placeholder
                }
              }
            } else {
              // No canvas found, fallback to cover or placeholder
              if (useCover && cover) {
-               this.setState({ logo: cover }); // Use cover if available and enabled
+               this.setState({ logo: cover, cover: cover }); // Use cover if available and enabled
              } else {
-               this.setState({ logo: songifyLogo }); // Fallback to placeholder
+               this.setState({ logo: songifyLogo, cover: songifyLogo }); // Fallback to placeholder
              }
            }
          })
         .catch(() => {
           // On error (e.g., network issues), fallback to cover or placeholder
           if (useCover && cover) {
-            this.setState({ logo: cover });
+            this.setState({ logo: cover, cover: cover });
           } else {
-            this.setState({ logo: songifyLogo });
+            this.setState({ logo: songifyLogo, cover: songifyLogo });
           }
         });
     } else if (useCover && cover) {
       // If canvas is not enabled, use cover if available
-      this.setState({ logo: cover });
+      this.setState({ logo: cover, cover: cover });
     } else {
       // If neither canvas nor cover is available, use the placeholder
-      this.setState({ logo: songifyLogo });
+      this.setState({ logo: songifyLogo, cover: songifyLogo });
     }
   };
 
@@ -147,7 +148,7 @@ export default class Widget extends Component {
               : `rgba(34, 34, 34, ${transparency})`,
         }}
       >
-        {this.props.position === "left" && <Logo logo={this.state.logo} />}
+        {this.props.position === "left" && <Logo key={`left-${this.state.logo}`} logo={this.state.logo} cover={this.state.cover} />}
 
         <div
           className="title"
@@ -167,29 +168,53 @@ export default class Widget extends Component {
             logoHandler={this.updateLogo}
             onTrackChange={this.handleTrackChange}
             enableScroll={this.props.enableScroll}
+            scrollAnimation={this.props.scrollAnimation}
+            canvas={this.props.canvas}
           />
         </div>
 
-        {this.props.position === "right" && <Logo logo={this.state.logo} />}
+        {this.props.position === "right" && <Logo key={`right-${this.state.logo}`} logo={this.state.logo} cover={this.state.cover} />}
       </div>
     );
   }
 }
 
 function Logo(props) {
+  const [videoError, setVideoError] = useState(false);
+
   // if props.logo contains .mp4 we assume it's a video and render a video element that is muted and loops infinitely, otherwise we render an image element
-  if (props.logo.includes(".mp4")) {
+  if (props.logo.includes(".mp4") && !videoError) {
     return (
       <div className="video-container">
-        <video key={props.logo} autoPlay muted loop>
+        <video 
+          key={props.logo} 
+          autoPlay 
+          muted 
+          loop
+          onError={() => {
+            console.error('Video failed to load:', props.logo);
+            setVideoError(true);
+          }}
+        >
           <source src={props.logo} type="video/mp4" />
         </video>
       </div>
     );
   }
+  
+  // Fallback to cover image if video fails or if it's not a video
+  const fallbackSrc = videoError && props.cover ? props.cover : props.logo;
+  
   return (
     <div className="logo">
-      <img src={props.logo} alt="logo" />
+      <img 
+        src={fallbackSrc} 
+        alt="logo" 
+        onError={() => {
+          // If the fallback image also fails, we could set a default image here
+          // For now, we'll just silently handle the error
+        }}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true }}>
       <Routes>
         <Route path="/:id?" element={<Root />} />
       </Routes>

@@ -11,13 +11,48 @@
     /* max-height: 30px; */
     white-space: nowrap;
     /* padding-left: 15px; */
-    animation: marquee 20s linear infinite;
     width: auto;
     overflow: hidden;
     text-overflow: ellipsis;
+    transform: translateX(0);
+    transition: transform 3s ease-in-out;
+}
+
+/* When scrolling is active, remove ellipsis to show full text */
+.song.scrolling {
+    text-overflow: clip;
+}
+
+/* When canvas is active, add left margin */
+.song.canvas-active {
+    margin-left: 10px;
 }
 
 @keyframes marquee {
     0% { transform: translateX(-100%)}
     100% { transform: translateX(235px)}
+}
+
+@keyframes marquee-bounce {
+    0% { transform: translateX(-100%)}
+    50% { transform: translateX(235px)}
+    100% { transform: translateX(-100%)}
+}
+
+@keyframes marquee-stop {
+    0% { transform: translateX(-100%)}
+    100% { transform: translateX(235px)}
+}
+
+@keyframes marquee-fade {
+    0% { 
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { 
+        transform: translateX(235px);
+        opacity: 0;
+    }
 }

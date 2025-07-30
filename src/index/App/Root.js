@@ -37,6 +37,8 @@ function Root() {
           hideAnimation={urlParams.get("hideAnimation")}
           showDuration={urlParams.get("showDuration")}
           canvas={urlParams.get("canvas")}
+          enableScroll={urlParams.get("enableScroll")}
+          scrollAnimation={urlParams.get("scrollAnimation")}
         />
       )}
     </Fragment>
