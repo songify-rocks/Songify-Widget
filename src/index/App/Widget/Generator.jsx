@@ -1,14 +1,25 @@
 import React, { Component } from "react"
 import "./Generator/Generator.css"
-import { Container, Row, Col } from "react-grid-system"
 import Slider from "rc-slider"
-import Tooltip from "rc-tooltip"
 import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
 import Widget from "../Widget"
-import Switch from "react-switch" // Keep this, it's for the toggle button
+import Switch from "react-switch"
 import 'animate.css';
-const Handle = Slider.Handle;
+
+const SliderHandle = Slider.Handle;
+
+const HandleWithTooltip = (props) => {
+    const { value, dragging, index, ...restProps } = props;
+    return (
+        <SliderHandle value={value} {...restProps}>
+            {dragging && (
+                <div className="slider-tooltip">
+                    {value}
+                </div>
+            )}
+        </SliderHandle>
+    );
+};
 
 export default class Generator extends Component {
     constructor(props) {
@@ -56,20 +67,6 @@ export default class Generator extends Component {
         localStorage.setItem('songify-widget-prefs', JSON.stringify(prefsToSave));
     };
 
-    handleBorder = (props) => {
-        const { value, dragging, index, ...restProps } = props;
-        return (
-            <Tooltip
-                prefixCls="rc-slider-tooltip"
-                overlay={value} // The tooltip now dynamically updates based on the slider value
-                visible={dragging} // Show tooltip when the handle is being dragged
-                placement="top" // Position the tooltip on top
-                key={index}
-            >
-                <Handle value={value} {...restProps} />
-            </Tooltip>
-        );
-    };
 
     componentDidMount = () => {
         // If ID is provided via props, use it; otherwise use saved UUID
@@ -90,35 +87,6 @@ export default class Generator extends Component {
         return `${window.location.protocol}//${window.location.hostname}`;
     };
 
-    handleTransparency = (props) => {
-        const { value, dragging, index, ...restProps } = props;
-        return (
-            <Tooltip
-                prefixCls="rc-slider-tooltip"
-                overlay={value}
-                visible={dragging}
-                placement="top"
-                key={index}
-            >
-                <Handle value={value} {...restProps} />
-            </Tooltip>
-        );
-    };
-
-    handleSpeed = (props) => {
-        const { value, dragging, index, ...restProps } = props;
-        return (
-            <Tooltip
-                prefixCls="rc-slider-tooltip"
-                overlay={value}
-                visible={dragging}
-                placement="top"
-                key={index}
-            >
-                <Handle value={value} {...restProps} />
-            </Tooltip>
-        );
-    };
 
     copyText = async () => {
         try {
@@ -261,165 +229,171 @@ export default class Generator extends Component {
                 <nav>
                     <h2>Songify Widget Generator</h2>
                 </nav>
-                <div style={{ marginTop: "8vh" }}>
-                    <div style={{ paddingTop: 50 }}>
-                        <Container style={{ marginTop: 50 }}>
-                            <Row>
-                                <Col sm={7}>
+                
+                <div className="generator-content">
+                    {/* Settings Panel */}
+                    <div className="settings-panel">
+                        
+                        {/* Setup Section */}
+                        <div className="settings-section">
+                            <h3>Setup</h3>
+                            <div className="setting select">
+                                <div>Songify URL</div>
+                                <input 
+                                    value={this.state.uuidUrl}
+                                    placeholder="Paste your Songify URL or UUID here"
+                                    onChange={this.urlHandler} 
+                                />
+                            </div>
+                        </div>
+
+                        {/* Appearance Section */}
+                        <div className="settings-section">
+                            <h3>Appearance</h3>
+                            <div className="setting select">
+                                <div>Rounded Corners</div>
+                                <Slider min={0} max={45} value={this.state.borderRadius} handle={HandleWithTooltip} onChange={(value) => {
+                                    this.setState({ borderRadius: value }, this.savePreferences);
+                                    this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+                                }} />
+                            </div>
+                            <div className="setting select">
+                                <div>Transparency</div>
+                                <Slider min={0} max={1} value={this.state.transparency} step={0.01} handle={HandleWithTooltip} onChange={(value) => {
+                                    this.setState({ transparency: value }, this.savePreferences);
+                                    this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+                                }} />
+                            </div>
+                            <div className="setting select">
+                                <div>Icon Position</div>
+                                <select value={this.state.iconPosition} onChange={this.handleIcon}>
+                                    <option value="left">Left</option>
+                                    <option value="right">Right</option>
+                                </select>
+                            </div>
+                            <div className="setting select">
+                                <div>Use Album Cover</div>
+                                <Switch checked={this.state.useCover} onChange={this.handleCover} onColor="#1ec258" offColor="#333333" />
+                            </div>
+                            <div className="setting select">
+                                <div>Use Canvas (if available)</div>
+                                <Switch checked={this.state.useCanvas} onChange={this.handleCanvas} onColor="#1ec258" offColor="#333333" />
+                            </div>
+                        </div>
+
+                        {/* Scrolling Section */}
+                        <div className="settings-section">
+                            <h3>Text Scrolling</h3>
+                            <div className="setting select">
+                                <div>Enable Scroll</div>
+                                <Switch checked={this.state.enableScroll} onChange={this.handleEnableScroll} onColor="#1ec258" offColor="#333333" />
+                            </div>
+                            {this.state.enableScroll && (
+                                <>
                                     <div className="setting select">
-                                        <div>Song Upload URL: </div>
-                                        <input value={this.state.uuidUrl}
-                                            placeholder="https://api.songify.rocks/v2/getsong?uuid=[your-uuid-here]"
-                                            onChange={this.urlHandler} />
-                                    </div>
-                                    <div className="setting select">
-                                        <div>Rounded Corners:</div>
-                                        <Slider min={0} max={45} value={this.state.borderRadius} handle={this.handleBorder} onChange={(value) => {
-                                            this.setState({ borderRadius: value }, this.savePreferences);
-                                            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
-                                        }} style={{ width: 332, marginTop: 15 }} />
-                                    </div>
-                                    <div className="setting select">
-                                        <div className="text">
-                                            <div>Icon position: </div>
-                                        </div>
-                                        <div className="selection">
-                                            <select value={this.state.iconPosition} onChange={this.handleIcon}>
-                                                <option value="left">Left</option>
-                                                <option value="right">Right</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="setting select">
-                                        <div className="text">
-                                            <div>Scroll Direction: </div>
-                                        </div>
-                                        <div className="selection">
-                                            <select value={this.state.scrollDirection} onChange={this.handleScroll}>
-                                                <option value="reverse">Right to Left</option>
-                                                <option value="normal">Left to Right</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    {this.state.enableScroll && (
-                                        <div className="setting select">
-                                            <div className="text">
-                                                <div>Scroll Animation: </div>
-                                            </div>
-                                            <div className="selection">
-                                                <select value={this.state.scrollAnimation} onChange={this.handleScrollAnimation}>
-                                                    <option value="continuous">Continuous Loop</option>
-                                                    <option value="bounce">Bounce</option>
-                                                    <option value="stop">Stop at End</option>
-                                                    <option value="fade">Fade Edges</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="setting select">
-                                        <div>Transparency: </div>
-                                        <Slider min={0} max={1} value={this.state.transparency} step={0.01} style={{ width: 332, marginTop: 15 }} handle={this.handleTransparency} onChange={(value) => {
-                                            this.setState({ transparency: value }, this.savePreferences);
-                                            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+                                        <div>Scroll Speed</div>
+                                        <Slider min={10} max={80} value={this.state.speed} step={1} handle={HandleWithTooltip} onChange={(value) => {
+                                            this.setState({ speed: value }, this.savePreferences);
+                                            this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
                                         }} />
                                     </div>
                                     <div className="setting select">
-                                        <div>Enable Scroll:</div>
-                                        <Switch checked={this.state.enableScroll} onChange={this.handleEnableScroll} />
-                                    </div>
-                                    {this.state.enableScroll && (
-                                        <div className="setting select">
-                                            <div>Scroll Speed: </div>
-                                            <Slider min={10} max={80} value={this.state.speed} step={1} style={{ width: 332, marginTop: 15 }} handle={this.handleSpeed} onChange={(value) => {
-                                                this.setState({ speed: value }, this.savePreferences);
-                                                this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
-                                            }} />
-                                        </div>
-                                    )}
-                                    <div className="setting select">
-                                        <div>Use album cover:</div>
-                                        <Switch checked={this.state.useCover} onChange={this.handleCover} />
+                                        <div>Scroll Direction</div>
+                                        <select value={this.state.scrollDirection} onChange={this.handleScroll}>
+                                            <option value="reverse">Right to Left</option>
+                                            <option value="normal">Left to Right</option>
+                                        </select>
                                     </div>
                                     <div className="setting select">
-                                        <div>Use canvas (if available):</div>
-                                        <Switch checked={this.state.useCanvas} onChange={this.handleCanvas} />
+                                        <div>Scroll Style</div>
+                                        <select value={this.state.scrollAnimation} onChange={this.handleScrollAnimation}>
+                                            <option value="continuous">Continuous Loop</option>
+                                            <option value="bounce">Bounce</option>
+                                            <option value="stop">Stop at End</option>
+                                            <option value="fade">Fade Edges</option>
+                                        </select>
                                     </div>
-                                    <div className="setting select">
-                                        <div>Show / Hide on song change</div>
-                                        <Switch checked={this.state.showHideOnChange} onChange={this.showHideOnChange} />
-                                    </div>
+                                </>
+                            )}
+                        </div>
 
+                        {/* Animation Section */}
+                        <div className="settings-section">
+                            <h3>Show/Hide Animation</h3>
+                            <div className="setting select">
+                                <div>Animate on Song Change</div>
+                                <Switch checked={this.state.showHideOnChange} onChange={this.showHideOnChange} onColor="#1ec258" offColor="#333333" />
+                            </div>
+                            {this.state.showHideOnChange && (
+                                <>
                                     <div className="setting select">
                                         <div>Show Animation</div>
                                         <select value={this.state.showAnimation} onChange={this.handleShowAnimation}>
                                             {inAnimations.map(animation => (
-                                                <option key={animation} value={animation}>
-                                                    {animation}
-                                                </option>
+                                                <option key={animation} value={animation}>{animation}</option>
                                             ))}
                                         </select>
                                     </div>
-
                                     <div className="setting select">
                                         <div>Hide Animation</div>
                                         <select value={this.state.hideAnimation} onChange={this.handleHideAnimation}>
                                             {outAnimations.map(animation => (
-                                                <option key={animation} value={animation}>
-                                                    {animation}
-                                                </option>
+                                                <option key={animation} value={animation}>{animation}</option>
                                             ))}
                                         </select>
                                     </div>
-
                                     <div className="setting select">
-                                        <div>Show Duration (s)</div>
-                                        <input type="number" value={this.state.showDuration} onChange={this.handleShowDuration} style={{ width: 118 }} />
+                                        <div>Display Duration (seconds)</div>
+                                        <input type="number" value={this.state.showDuration} onChange={this.handleShowDuration} />
                                     </div>
+                                </>
+                            )}
+                        </div>
 
-                                </Col>
-                                <Col sm={5}>
-                                    <div className="preview">
-                                        <Widget
-                                            id={this.state.uuid}
-                                            transparency={this.state.transparency}
-                                            limit={3000}
-                                            dir={this.state.scrollDirection}
-                                            speed={this.state.speed}
-                                            position={this.state.iconPosition}
-                                            corners={this.state.borderRadius}
-                                            cover={this.state.useCover}
-                                            canvas={this.state.useCanvas}
-                                            showHideOnChange={this.state.showHideOnChange}
-                                            showAnimation={this.state.showAnimation}
-                                            hideAnimation={this.state.hideAnimation}
-                                            showDuration={this.state.showDuration}
-                                            enableScroll={this.state.enableScroll}
-                                            scrollAnimation={this.state.scrollAnimation}
-                                            preview={true}
-                                            version={this.state.version}
-                                        />
-                                    </div>
-                                    <textarea
-                                        style={{ height: 100, width: 368, resize: 'vertical' }}
-                                        id="url"
-                                        className="link-generator"
-                                        type="text"
-                                        readOnly
-                                        value={this.state.url}
-                                        placeholder="https://widget.songify.rocks/" />
-                                    <button 
-                                        className={`copy-button ${this.state.copyFeedback ? 'copied' : ''}`}
-                                        onClick={this.copyText}
-                                        disabled={!this.state.url}
-                                    >
-                                        {this.state.copyFeedback ? '✓ Copied!' : 'Copy URL'}
-                                    </button>
-                                    <div className="widthheight">
-                                        width: <code>312 px</code>, height: <code>64 px</code>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </Container>
+                    </div>
+
+                    {/* Preview Panel */}
+                    <div className="preview-panel">
+                        <div className="preview">
+                            <Widget
+                                id={this.state.uuid}
+                                transparency={this.state.transparency}
+                                limit={3000}
+                                dir={this.state.scrollDirection}
+                                speed={this.state.speed}
+                                position={this.state.iconPosition}
+                                corners={this.state.borderRadius}
+                                cover={this.state.useCover}
+                                canvas={this.state.useCanvas}
+                                showHideOnChange={this.state.showHideOnChange}
+                                showAnimation={this.state.showAnimation}
+                                hideAnimation={this.state.hideAnimation}
+                                showDuration={this.state.showDuration}
+                                enableScroll={this.state.enableScroll}
+                                scrollAnimation={this.state.scrollAnimation}
+                                preview={true}
+                                version={this.state.version}
+                            />
+                        </div>
+                        
+                        <div className="url-output">
+                            <textarea
+                                id="url"
+                                readOnly
+                                value={this.state.url}
+                                placeholder="Your widget URL will appear here..."
+                            />
+                            <button 
+                                className={`copy-button ${this.state.copyFeedback ? 'copied' : ''}`}
+                                onClick={this.copyText}
+                                disabled={!this.state.url}
+                            >
+                                {this.state.copyFeedback ? '✓ Copied!' : 'Copy Widget URL'}
+                            </button>
+                            <div className="widthheight">
+                                Recommended size: <code>312 × 64 px</code>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
