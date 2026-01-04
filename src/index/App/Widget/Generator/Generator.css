@@ -145,3 +145,39 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;
 }
+
+.copy-button {
+    width: 400px;
+    padding: 14px 24px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background-color: #5865F2;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.copy-button:hover:not(:disabled) {
+    background-color: #4752C4;
+    transform: translateY(-1px);
+}
+
+.copy-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.copy-button:disabled {
+    background-color: #72767d;
+    cursor: not-allowed;
+}
+
+.copy-button.copied {
+    background-color: #3BA55C;
+}
+
+.copy-button.copied:hover {
+    background-color: #3BA55C;
+}

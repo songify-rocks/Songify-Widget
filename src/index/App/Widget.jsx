@@ -68,10 +68,17 @@ export default class Widget extends Component {
       this.handleTrackChange();
 
       // Use setInterval and pass the function reference with an arrow function
-      setInterval(
+      this.previewInterval = setInterval(
         () => this.handleTrackChange(5),
         this.props.showDuration * 1000 + 2000
       );
+    }
+  };
+
+  componentWillUnmount = () => {
+    // Clean up interval to prevent memory leaks
+    if (this.previewInterval) {
+      clearInterval(this.previewInterval);
     }
   };
 

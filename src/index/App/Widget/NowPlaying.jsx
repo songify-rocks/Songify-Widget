@@ -20,13 +20,26 @@ export default class NowPlaying extends Component {
   componentDidMount = () => {
     this.fetchSong();
     this.fetchCover();
-    setInterval(this.fetchSong, this.props.ratelimit);
+    this.fetchInterval = setInterval(this.fetchSong, this.props.ratelimit);
+  };
+
+  componentWillUnmount = () => {
+    // Clean up interval to prevent memory leaks
+    if (this.fetchInterval) {
+      clearInterval(this.fetchInterval);
+    }
+    // Clean up any bounce animation timeouts
+    if (this.bounceTimeouts) {
+      this.bounceTimeouts.forEach((timeout) => clearTimeout(timeout));
+    }
   };
 
   componentDidUpdate(prevProps) {
     if (prevProps.version !== this.props.version) {
-      this.state.currentSong = "";
-      this.fetchSong();
+      this.setState({ currentSong: "" }, () => {
+        this.fetchSong();
+      });
+      return; // Exit early since we're fetching new song
     }
 
     // Re-apply animation when speed changes
@@ -296,10 +309,11 @@ export default class NowPlaying extends Component {
   render() {
     // Check if canvas is active
     const canvasActive = this.props.canvas === "true" || this.props.canvas === true;
+    const displayText = this.state.currentSong || "♪ Nothing playing...";
     
     return (
       <div className={`song ${canvasActive ? 'canvas-active' : ''}`} id="song">
-        {this.state.currentSong}
+        {displayText}
       </div>
     );
   }

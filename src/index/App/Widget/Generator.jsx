@@ -1,4 +1,4 @@
-import React, { Component, version } from "react"
+import React, { Component } from "react"
 import "./Generator/Generator.css"
 import { Container, Row, Col } from "react-grid-system"
 import Slider from "rc-slider"
@@ -14,7 +14,8 @@ export default class Generator extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {
+        // Default state
+        const defaultState = {
             uuid: "",
             speed: 20,
             scrollDirection: "reverse",
@@ -31,9 +32,29 @@ export default class Generator extends Component {
             hideAnimation: "fadeOut",
             showDuration: 5,
             enableScroll: true,
-            version: 1
+            version: 1,
+            copyFeedback: false
+        };
+
+        // Try to load saved preferences from localStorage
+        const saved = localStorage.getItem('songify-widget-prefs');
+        if (saved) {
+            try {
+                const savedPrefs = JSON.parse(saved);
+                this.state = { ...defaultState, ...savedPrefs, copyFeedback: false };
+            } catch (e) {
+                this.state = defaultState;
+            }
+        } else {
+            this.state = defaultState;
         }
     }
+
+    // Save preferences to localStorage (excluding temporary UI state)
+    savePreferences = () => {
+        const { url, copyFeedback, ...prefsToSave } = this.state;
+        localStorage.setItem('songify-widget-prefs', JSON.stringify(prefsToSave));
+    };
 
     handleBorder = (props) => {
         const { value, dragging, index, ...restProps } = props;
@@ -51,12 +72,17 @@ export default class Generator extends Component {
     };
 
     componentDidMount = () => {
-        if (this.props.id != null) {
+        // If ID is provided via props, use it; otherwise use saved UUID
+        const uuid = this.props.id || this.state.uuid;
+        if (uuid) {
             this.setState({
-                uuidUrl: `https://api.songify.rocks/v2/getsong?uuid=${this.props.id}`,
-                uuid: this.props.id
+                uuidUrl: `https://api.songify.rocks/v2/getsong?uuid=${uuid}`,
+                uuid: uuid
             });
-            this.updateLink(this.props.id, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+            this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+        } else if (this.state.uuid) {
+            // If we have a saved UUID, generate the link
+            this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
         }
     };
 
@@ -94,89 +120,109 @@ export default class Generator extends Component {
         );
     };
 
-    copyText = () => {
-        const textbox = document.getElementById("url");
-        textbox.select();
-        document.execCommand("copy");
+    copyText = async () => {
+        try {
+            await navigator.clipboard.writeText(this.state.url);
+            this.setState({ copyFeedback: true });
+            setTimeout(() => {
+                this.setState({ copyFeedback: false });
+            }, 2000);
+        } catch (err) {
+            // Fallback for older browsers
+            const textbox = document.getElementById("url");
+            textbox.select();
+            document.execCommand("copy");
+            this.setState({ copyFeedback: true });
+            setTimeout(() => {
+                this.setState({ copyFeedback: false });
+            }, 2000);
+        }
     };
 
     urlHandler = (event) => {
         const text = event.target.value;
-        const uuid = text.split("?id=")[1];
+        let uuid = text.split("?id=")[1];
+        
+        // Also handle direct UUID input or UUID from path
+        if (!uuid) {
+            // Check if it's a direct UUID or from URL path
+            const uuidMatch = text.match(/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/i);
+            if (uuidMatch) {
+                uuid = uuidMatch[0];
+            }
+        }
 
         this.setState({
             uuidUrl: text,
-            uuid
-        });
+            uuid: uuid || ""
+        }, this.savePreferences);
         this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleIcon = (event) => {
         this.setState({
-            iconPosition: event.target.value
-        });
-        this.state.version = this.state.version + 1;
+            iconPosition: event.target.value,
+            version: this.state.version + 1
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, event.target.value, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleScroll = (event) => {
         this.setState({
             scrollDirection: event.target.value
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, event.target.value, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleScrollAnimation = (event) => {
         this.setState({
             scrollAnimation: event.target.value
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, event.target.value);
     };
 
     handleCover = (checked) => {
         this.setState({
-            useCover: checked
-        });
-        this.state.version = this.state.version + 1;
-
+            useCover: checked,
+            version: this.state.version + 1
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleCanvas = (checked) => {
         this.setState({
-            useCanvas: checked
-        });
-        this.state.version = this.state.version + 1;
-
-        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, checked, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, checked, this.state.enableScroll, this.state.scrollAnimation);
+            useCanvas: checked,
+            version: this.state.version + 1
+        }, this.savePreferences);
+        this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, checked, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     showHideOnChange = (checked) => {
         this.setState({
             showHideOnChange: checked
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, checked, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleEnableScroll = (checked) => {
         this.setState({
-            enableScroll: checked
-        });
-        this.state.version = this.state.version + 1;
+            enableScroll: checked,
+            version: this.state.version + 1
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, checked, this.state.scrollAnimation);
     };
 
     handleShowAnimation = (event) => {
         this.setState({
             showAnimation: event.target.value
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, event.target.value, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
     handleHideAnimation = (event) => {
         this.setState({
             hideAnimation: event.target.value
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, event.target.value, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
@@ -184,7 +230,7 @@ export default class Generator extends Component {
         const duration = parseFloat(event.target.value) || 0;
         this.setState({
             showDuration: duration
-        });
+        }, this.savePreferences);
         this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, duration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
     };
 
@@ -229,7 +275,7 @@ export default class Generator extends Component {
                                     <div className="setting select">
                                         <div>Rounded Corners:</div>
                                         <Slider min={0} max={45} value={this.state.borderRadius} handle={this.handleBorder} onChange={(value) => {
-                                            this.setState({ borderRadius: value });
+                                            this.setState({ borderRadius: value }, this.savePreferences);
                                             this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, value, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
                                         }} style={{ width: 332, marginTop: 15 }} />
                                     </div>
@@ -273,7 +319,7 @@ export default class Generator extends Component {
                                     <div className="setting select">
                                         <div>Transparency: </div>
                                         <Slider min={0} max={1} value={this.state.transparency} step={0.01} style={{ width: 332, marginTop: 15 }} handle={this.handleTransparency} onChange={(value) => {
-                                            this.setState({ transparency: value });
+                                            this.setState({ transparency: value }, this.savePreferences);
                                             this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, value, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
                                         }} />
                                     </div>
@@ -285,7 +331,7 @@ export default class Generator extends Component {
                                         <div className="setting select">
                                             <div>Scroll Speed: </div>
                                             <Slider min={10} max={80} value={this.state.speed} step={1} style={{ width: 332, marginTop: 15 }} handle={this.handleSpeed} onChange={(value) => {
-                                                this.setState({ speed: value });
+                                                this.setState({ speed: value }, this.savePreferences);
                                                 this.updateLink(this.state.uuid, this.state.scrollDirection, value, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
                                             }} />
                                         </div>
@@ -354,14 +400,20 @@ export default class Generator extends Component {
                                         />
                                     </div>
                                     <textarea
-                                        style={{ height: 140, width: 368, resize: 'vertical' }}
+                                        style={{ height: 100, width: 368, resize: 'vertical' }}
                                         id="url"
                                         className="link-generator"
                                         type="text"
                                         readOnly
                                         value={this.state.url}
-                                        onClick={this.copyText}
                                         placeholder="https://widget.songify.rocks/" />
+                                    <button 
+                                        className={`copy-button ${this.state.copyFeedback ? 'copied' : ''}`}
+                                        onClick={this.copyText}
+                                        disabled={!this.state.url}
+                                    >
+                                        {this.state.copyFeedback ? '✓ Copied!' : 'Copy URL'}
+                                    </button>
                                     <div className="widthheight">
                                         width: <code>312 px</code>, height: <code>64 px</code>
                                     </div>
