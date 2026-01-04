@@ -2,7 +2,8 @@
 
 A customizable "Now Playing" widget that displays your currently playing Spotify track. Perfect for streamers who want to show their audience what music they're listening to.
 
-![Widget Preview](reference/widget.png)
+![Preview](https://github.com/user-attachments/assets/a789b8aa-21a5-4db1-8100-c5bbe6adce41)
+
 
 ## What is Songify?
 
