@@ -309,7 +309,7 @@ export default class NowPlaying extends Component {
   render() {
     // Check if canvas is active
     const canvasActive = this.props.canvas === "true" || this.props.canvas === true;
-    const displayText = this.state.currentSong || "♪ Nothing playing...";
+    const displayText = this.state.currentSong || "";
     
     return (
       <div className={`song ${canvasActive ? 'canvas-active' : ''}`} id="song">
