@@ -35,11 +35,11 @@ export default class NowPlaying extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps.version !== this.props.version) {
+    if (prevProps.uuid !== this.props.uuid || prevProps.version !== this.props.version) {
       this.setState({ currentSong: "" }, () => {
         this.fetchSong();
       });
-      return; // Exit early since we're fetching new song
+      return;
     }
 
     // Re-apply animation when speed changes
@@ -82,39 +82,51 @@ export default class NowPlaying extends Component {
   }
 
   fetchSong = async () => {
-    if (this.props.uuid !== "" && this.props.uuid != null) {
-      const fullSong = await fetch(
-        `https://api.songify.rocks/v2/getsong?uuid=${this.props.uuid}&full=true`
-      ).then((res) => res.json());
+    const uuid = this.props.uuid;
+    if (!uuid) return;
+
+    try {
+      const response = await fetch(
+        `https://api.songify.rocks/v2/getsong?uuid=${encodeURIComponent(uuid)}&full=true`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const fullSong = await response.json();
+      if (this.props.uuid !== uuid) return;
+
       const song = fullSong.song;
       if (song !== this.state.currentSong) {
-
-        
-        // Stop any current animation immediately
         if (this.animationRunning) {
           this.stopCurrentAnimation();
         }
-        
-        // update the state
+
         this.props.onTrackChange();
         this.setState({
           currentSong: song,
           fullSongObj: fullSong,
         });
         this.fetchCover();
-        
-        // Wait a bit for the DOM to update with the new song text
+
         setTimeout(() => {
           this.checkSize();
         }, 100);
       }
+    } catch (error) {
+      console.error("Failed to fetch song:", error);
     }
   };
 
   fetchCover = async () => {
+    if (!this.props.uuid) {
+      this.props.logoHandler("", this.state.fullSongObj);
+      return;
+    }
+
     try {
       const response = await fetch(
-        `https://api.songify.rocks/v2/getcover?uuid=${this.props.uuid}`
+        `https://api.songify.rocks/v2/getcover?uuid=${encodeURIComponent(this.props.uuid)}`
       );
       
       if (!response.ok) {

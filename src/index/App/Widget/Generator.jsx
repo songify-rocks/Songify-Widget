@@ -59,6 +59,11 @@ export default class Generator extends Component {
         } else {
             this.state = defaultState;
         }
+
+        // URL / query UUID always wins over a previously saved id
+        if (this.props.id) {
+            this.state.uuid = this.props.id;
+        }
     }
 
     // Save preferences to localStorage (excluding temporary UI state)
@@ -77,6 +82,7 @@ export default class Generator extends Component {
                 uuid: uuid
             });
             this.updateLink(uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
+            this.savePreferences();
         } else if (this.state.uuid) {
             // If we have a saved UUID, generate the link
             this.updateLink(this.state.uuid, this.state.scrollDirection, this.state.speed, this.state.transparency, this.state.iconPosition, this.state.borderRadius, this.state.useCover, this.state.showHideOnChange, this.state.showAnimation, this.state.hideAnimation, this.state.showDuration, this.state.useCanvas, this.state.enableScroll, this.state.scrollAnimation);
@@ -109,16 +115,7 @@ export default class Generator extends Component {
 
     urlHandler = (event) => {
         const text = event.target.value;
-        let uuid = text.split("?id=")[1];
-        
-        // Also handle direct UUID input or UUID from path
-        if (!uuid) {
-            // Check if it's a direct UUID or from URL path
-            const uuidMatch = text.match(/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/i);
-            if (uuidMatch) {
-                uuid = uuidMatch[0];
-            }
-        }
+        const uuid = extractUuid(text);
 
         this.setState({
             uuidUrl: text,
@@ -400,3 +397,26 @@ export default class Generator extends Component {
         )
     }
 }
+
+function extractUuid(text) {
+    if (!text) return "";
+
+    try {
+        const url = new URL(text, window.location.origin);
+        const fromQuery = url.searchParams.get("id") || url.searchParams.get("uuid");
+        if (fromQuery && isUuid(fromQuery)) return fromQuery;
+        const pathMatch = url.pathname.match(/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/i);
+        if (pathMatch) return pathMatch[0];
+    } catch (e) {
+        // Not a URL — fall through to raw UUID matching
+    }
+
+    const uuidMatch = text.match(/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/i);
+    return uuidMatch ? uuidMatch[0] : "";
+}
+
+function isUuid(value) {
+    return /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(value);
+}
+
+export default Generator

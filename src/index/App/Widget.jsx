@@ -166,6 +166,7 @@ export default class Widget extends Component {
 
         <div className="nowplaying">
           <NowPlaying
+            key={this.props.id || "none"}
             version={this.props.version}
             uuid={this.props.id}
             ratelimit={this.props.limit}

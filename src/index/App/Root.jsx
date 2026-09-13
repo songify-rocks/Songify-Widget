@@ -14,7 +14,7 @@ function Root() {
   useEffect(() => {
     if (id === "demo") {
       window.location.href =
-        "https://widget.songify.rocks/4c7e74a6-00b4-4344-8021-e6296f601e3e";
+        "https://widget.songify.rocks/?id=4c7e74a6-00b4-4344-8021-e6296f601e3e";
     }
   }, [id]);
 
@@ -46,7 +46,8 @@ function Root() {
 }
 
 function checkForUUID(id) {
-  const regex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/g;
+  if (!id) return false;
+  const regex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
   return regex.test(id);
 }
 
